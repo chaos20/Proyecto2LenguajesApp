@@ -30,11 +30,11 @@ public class RecipeList extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_add:
                 // About option clicked.
-                Intent add = new Intent(".AddRecipe");
+                Intent add = new Intent(".NewRecipe");
                 startActivity(add);
                 return true;
             case R.id.action_search:
-                Intent search = new Intent(".AddRecipe");
+                Intent search = new Intent(".SearchRecipe");
                 startActivity(search);
                 return true;
             case R.id.action_about:

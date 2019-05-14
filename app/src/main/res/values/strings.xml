@@ -6,4 +6,7 @@
     <string name="username">UserName</string>
     <string name="password">Password</string>
     <string name="recetas">Recetas</string>
+    <string name="new_recipe">New Recipe</string>
+    <string name="search_recipe">Search Recipe</string>
+    <string name="about">About</string>
 </resources>

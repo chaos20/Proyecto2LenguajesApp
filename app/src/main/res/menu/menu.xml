@@ -3,14 +3,14 @@
     <item
         android:id="@+id/action_add"
         android:orderInCategory="1"
-        android:title="About"/>
+        android:title="@string/new_recipe"/>
     <item
         android:id="@+id/action_search"
         android:orderInCategory="2"
-        android:title="Exit"/>
+        android:title="@string/search_recipe"/>
     <item
         android:id="@+id/action_about"
         android:orderInCategory="3"
-        android:title="Exit"/>
+        android:title="@string/about"/>
 
 </menu>
