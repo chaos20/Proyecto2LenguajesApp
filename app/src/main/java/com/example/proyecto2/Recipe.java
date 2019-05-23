@@ -7,13 +7,15 @@ public class Recipe {
     private String type;
     private ArrayList<String> ingridients;
     private ArrayList<String> steps;
+    private ArrayList<String> images;
 
 
-    public Recipe(String pname, String ptype, ArrayList<String> pIngridients, ArrayList<String> pSteps){
+    public Recipe(String pname, String ptype, ArrayList<String> pIngridients, ArrayList<String> pSteps, ArrayList<String>pImag){
         this.name = pname;
         this.type = ptype;
         this.ingridients = new ArrayList<>(pIngridients);
         this.steps = new ArrayList<>(pSteps);
+        this.images = new ArrayList<>(pImag);
     }
 
     public String getName() {
@@ -30,6 +32,14 @@ public class Recipe {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public ArrayList<String> getImages() {
+        return images;
+    }
+
+    public void setImages(ArrayList<String> images) {
+        this.images = images;
     }
 
     public ArrayList<String> getIngridients() {

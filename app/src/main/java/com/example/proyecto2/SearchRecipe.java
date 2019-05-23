@@ -87,6 +87,9 @@ public class SearchRecipe extends AppCompatActivity {
         ArrayList<String> sl = new ArrayList<>();
         ArrayList<String> sl2 = new ArrayList<>();
 
+        ArrayList<String> im1 = new ArrayList<>();
+        ArrayList<String> im2 = new ArrayList<>();
+
         f1.add("pork");
         f1.add("onions");
         f1.add("salt");
@@ -103,10 +106,15 @@ public class SearchRecipe extends AppCompatActivity {
         sl2.add("cook the pasta");
         sl2.add("add the sauce");
 
+        im1.add("https://cdn-image.foodandwine.com/sites/default/files/201307-xl-spice-roasted-pork-tenderloin.jpg");
+        im1.add("https://www.bbcgoodfood.com/sites/default/files/styles/recipe/public/recipe_images/recipe-image-legacy-id--738_12.jpg?itok=l-J37lLl");
+
+        im2.add("https://d3cizcpymoenau.cloudfront.net/images/legacy/37655/SFS_spaghetti_carbonara_CLR-3.jpg");
 
 
-        Recipe recipe1 = new Recipe("Roasted pork", "meat",f1,sl);
-        Recipe recipe2 = new Recipe("Spaghetti Carbonara","pasta",ss,sl2);
+
+        Recipe recipe1 = new Recipe("Roasted pork", "meat",f1,sl,im1);
+        Recipe recipe2 = new Recipe("Spaghetti Carbonara","pasta",ss,sl2,im2);
 
 
 
@@ -139,12 +147,13 @@ public class SearchRecipe extends AppCompatActivity {
                 i.putExtra("Type",adap.types.get(position));
                 i.putExtra("Ingredients",adap.ingredients.get(position).toString());
                 i.putExtra("Steps",adap.steps.get(position).toString());
+                i.putExtra("Images",adap.images.get(position));
                 startActivity(i);
             }
         });
     }
 
-    //aqui se haria el llamado a la busqueda
+    //aqui se haria el llamado a la busqueda y con los objetos encontrados, se pasan a tipo Recipe y se usa show data
     public void search(String obj, String type){
                     showData();
         }

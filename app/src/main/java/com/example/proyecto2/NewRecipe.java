@@ -62,7 +62,7 @@ public class NewRecipe extends AppCompatActivity {
             }
         });
 
-        Recipe newRep = new Recipe(name.getText().toString(),type.getText().toString(),ingridients,steps);
+        Recipe newRep = new Recipe(name.getText().toString(),type.getText().toString(),ingridients,steps,null); // -> falta agregar imagenes
         saveRecipe(newRep);
 
 

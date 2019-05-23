@@ -16,6 +16,7 @@ public class AdapterRecipe extends BaseAdapter {
     public ArrayList<String> types= new ArrayList<>();
     public ArrayList<ArrayList<String>> ingredients= new ArrayList<>();
     public ArrayList<ArrayList<String>> steps= new ArrayList<>();
+    public ArrayList<ArrayList<String>> images = new ArrayList<>();
 
 
     public AdapterRecipe(Context ctx, int textViewResourceId, ArrayList<Recipe> recipies){
@@ -25,6 +26,7 @@ public class AdapterRecipe extends BaseAdapter {
             types.add(rep.getType());
             ingredients.add(rep.getIngridients());
             steps.add(rep.getSteps());
+            images.add(rep.getImages());
         }
     }
 
