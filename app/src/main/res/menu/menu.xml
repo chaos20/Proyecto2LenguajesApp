@@ -12,5 +12,9 @@
         android:id="@+id/action_about"
         android:orderInCategory="3"
         android:title="@string/about"/>
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="4"
+        android:title="@string/refresh"/>
 
 </menu>

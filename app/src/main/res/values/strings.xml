@@ -5,7 +5,7 @@
     <string name="Register">Register</string>
     <string name="username">UserName</string>
     <string name="password">Password</string>
-    <string name="recetas">Recetas</string>
+    <string name="recetas">Recipes</string>
     <string name="new_recipe">New Recipe</string>
     <string name="search_recipe">Search Recipe</string>
     <string name="about">About</string>
@@ -18,4 +18,13 @@
     <string name="stepsHead">TextView</string>
     <string name="nameShow">TextView</string>
     <string name="TypeShow">TextView</string>
+    <string name="emailReg">Email</string>
+    <string name="passwordReg">Password</string>
+    <string name="registerButtonAc">Register</string>
+    <string name="refresh">Refresh</string>
+    <string name="enter_the_name_of_the_recipe">Enter the name of the Recipe</string>
+    <string name="enter_the_type">Enter the type</string>
+    <string name="add_the_ingredients">Add the ingredients</string>
+    <string name="next">next</string>
+    <string name="add_the_steps">Add the steps</string>
 </resources>

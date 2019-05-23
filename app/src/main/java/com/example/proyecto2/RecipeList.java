@@ -29,12 +29,12 @@ public class RecipeList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
-
-        final ListView lv;
-
-        lv = findViewById(R.id.listViewRep);
+        showData();
+    }
 
 
+    // este seria el metodo que carga la informacion de las listas
+    public ArrayList<Recipe> createLists(){
         ArrayList<Recipe> rep = new ArrayList<>();
 
         ArrayList<String> f1 = new ArrayList<>();
@@ -71,16 +71,20 @@ public class RecipeList extends AppCompatActivity {
 
 
 
+        return rep;
+    }
 
 
-        ArrayList<String> huh = new ArrayList<>();
-        huh.add("Fuck");
-        huh.add("This");
-        huh.add("SHit");
+    // se encarga de mostrar la informacion en un list view
+    public void showData(){
+        final ListView lv;
 
-        final AdapterRecipe adap = new AdapterRecipe(this,0,rep);
+        lv = findViewById(R.id.listViewRep);
 
-        ArrayAdapter<Recipe> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, rep);
+        ArrayList<Recipe> repD = new ArrayList<>(createLists());
+
+        final AdapterRecipe adap = new AdapterRecipe(this,0,repD);
+
         lv.setAdapter(adap);
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -95,7 +99,6 @@ public class RecipeList extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
     }
 
     @Override
@@ -104,6 +107,7 @@ public class RecipeList extends AppCompatActivity {
         return true;
     }
 
+    //estas son las opciones del menu de contexto, o sea los ...
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -117,8 +121,13 @@ public class RecipeList extends AppCompatActivity {
                 startActivity(search);
                 return true;
             case R.id.action_about:
-
+                Toast.makeText(getBaseContext(),"Proyecto de Lenguajes 2: Jose Fabio H, Pablo Zuñiga y Josua Jimenez",Toast.LENGTH_LONG).show();
                 return true;
+
+            case R.id.action_refresh:
+                showData();
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }

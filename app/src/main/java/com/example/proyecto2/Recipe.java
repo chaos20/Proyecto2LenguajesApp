@@ -8,6 +8,7 @@ public class Recipe {
     private ArrayList<String> ingridients;
     private ArrayList<String> steps;
 
+
     public Recipe(String pname, String ptype, ArrayList<String> pIngridients, ArrayList<String> pSteps){
         this.name = pname;
         this.type = ptype;
