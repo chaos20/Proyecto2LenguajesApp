@@ -65,7 +65,7 @@ public class RecipeList extends AppCompatActivity {
         im1.add("https://cdn-image.foodandwine.com/sites/default/files/201307-xl-spice-roasted-pork-tenderloin.jpg");
         im1.add("https://www.bbcgoodfood.com/sites/default/files/styles/recipe/public/recipe_images/recipe-image-legacy-id--738_12.jpg?itok=l-J37lLl");
 
-        im2.add("https://d3cizcpymoenau.cloudfront.net/images/legacy/37655/SFS_spaghetti_carbonara_CLR-3.jpg");
+        im2.add("https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/6c33f61f-fb63-45bd-9813-d057df732865.jpg");
 
 
 
