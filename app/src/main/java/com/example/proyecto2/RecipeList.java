@@ -23,12 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeList extends AppCompatActivity {
-
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
+        Intent i = getIntent();
+        token = i.getExtras().getString("token");
         showData();
     }
 
@@ -107,6 +109,7 @@ public class RecipeList extends AppCompatActivity {
                 i.putExtra("Ingredients",adap.ingredients.get(position).toString());
                 i.putExtra("Steps",adap.steps.get(position).toString());
                 i.putExtra("Images",adap.images.get(position));
+
                 startActivity(i);
             }
         });
@@ -125,10 +128,12 @@ public class RecipeList extends AppCompatActivity {
             case R.id.action_add:
                 // About option clicked.
                 Intent add = new Intent(".NewRecipe");
+                add.putExtra("token",token);
                 startActivity(add);
                 return true;
             case R.id.action_search:
                 Intent search = new Intent(".SearchRecipe");
+                search.putExtra("token",token);
                 startActivity(search);
                 return true;
             case R.id.action_about:

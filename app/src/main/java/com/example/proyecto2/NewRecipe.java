@@ -68,6 +68,8 @@ public class NewRecipe extends AppCompatActivity {
     Button selectButton;
     ImageView mImage;
 
+    String token;
+
 
 
     @Override
@@ -76,6 +78,9 @@ public class NewRecipe extends AppCompatActivity {
         setContentView(R.layout.activity_new_recipe);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
+
+        Intent i = getIntent();
+        i.getExtras().getString("token");
 
 
         mImage = findViewById(R.id.imageViewtest);

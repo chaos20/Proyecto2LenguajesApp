@@ -19,12 +19,16 @@ import java.util.ArrayList;
 public class SearchRecipe extends AppCompatActivity {
 
     private String searchObject; //Esto es el tipo de objeto a buscar, o sea si se busca un nombre, un tipo o un ingrediente
+    private String token;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_recipe);
+
+        Intent i = getIntent();
+        token = i.getExtras().getString("token");
 
         ArrayAdapter<String> SpinnerAdapter;
 

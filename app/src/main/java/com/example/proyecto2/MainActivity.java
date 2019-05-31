@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText password;
     private Button login_btn;
     private Button reg_btn;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +41,10 @@ public class MainActivity extends AppCompatActivity {
                         if(username.getText().toString().equals("User") && password.getText().toString().equals("1234")){
                             Toast.makeText(MainActivity.this,"User and password is correct",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(".RecipeList");
+                            token = "verificado";
                             //Cualquier envio de datos o verificacion debe hacerse antes de aqui, si no se va a pasar a la
                             //siguiente actividad
+                            intent.putExtra("token",token);
 
 
                             startActivity(intent);
