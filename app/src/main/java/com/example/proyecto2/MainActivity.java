@@ -8,13 +8,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
     //variables para enlazar con la interfaz
     private EditText username;
     private EditText password;
     private Button login_btn;
     private Button reg_btn;
-    String token;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +45,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // la funcion getText() te da el texto que la app obtiene del campo con toString() lo convierte en un string
-                        if(username.getText().toString().equals("User") && password.getText().toString().equals("1234")){
+
+                        login(username.getText().toString(), password.getText().toString());
+                        if( token == "Autenticado"){
                             Toast.makeText(MainActivity.this,"User and password is correct",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(".RecipeList");
-                            token = "verificado";
-                            //Cualquier envio de datos o verificacion debe hacerse antes de aqui, si no se va a pasar a la
-                            //siguiente actividad
                             intent.putExtra("token",token);
 
 
@@ -67,6 +73,33 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        }
+
+        public void login(String username, String pass){
+            try{
+                String api = "https://api-recetas.herokuapp.com/";
+
+                URL url = new URL(api +"login?correo="+username+"&"+"password="+pass);
+                HttpURLConnection urlConnection = null;
+                urlConnection = (HttpURLConnection)url.openConnection();
+                urlConnection.connect();
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder b = new StringBuilder();
+                String input;
+
+                while((input = br.readLine()) != null){
+                    b.append(input);
+                }
+
+                token = b.toString();
+
+                br.close();
+                urlConnection.disconnect();
+            } catch(MalformedURLException e){
+                e.printStackTrace();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
     }
 

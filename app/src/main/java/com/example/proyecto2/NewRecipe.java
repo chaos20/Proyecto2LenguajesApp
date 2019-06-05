@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
@@ -50,8 +55,8 @@ import java.util.UUID;
 
 public class NewRecipe extends AppCompatActivity {
 
-    private static final String AWS_KEY = "AKIAJS4VHCVPF6AALEOA";
-    private static final String AWS_SECRET = "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";
+    private static final String AWS_KEY = "";
+    private static final String AWS_SECRET = "";
     private static final String AWS_BUCKET = "jose-tec-lenguajes";
 
     private EditText name;
@@ -60,7 +65,7 @@ public class NewRecipe extends AppCompatActivity {
     private EditText step;
     private ArrayList<String> ingridients = new ArrayList<>();
     private ArrayList<String> steps = new ArrayList<>();
-    ArrayList<String> imags = new ArrayList<>();
+    private ArrayList<String> imags = new ArrayList<>();
     private Button addIngri;
     private Button addStep;
     private Button addImag;
@@ -146,7 +151,32 @@ public class NewRecipe extends AppCompatActivity {
     }
 
     public void saveRecipe(){
-        Recipe newRep = new Recipe(name.getText().toString(),type.getText().toString(),ingridients,steps,imags);
+
+
+        try{
+            String api = "https://api-recetas.herokuapp.com/";
+
+            URL url = new URL(api +"new-recipe?name="+name.getText().toString()+"&"+"tipo="+type.getText().toString()+"&"+"ingredients=" + turnArrToS(ingridients)+"&"+"steps="+turnArrToS(steps)+"&"+turnArrToS(imags));
+            HttpURLConnection urlConnection = null;
+            urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.connect();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder b = new StringBuilder();
+            String input;
+
+            while((input = br.readLine()) != null){
+                b.append(input);
+            }
+
+            token = b.toString();
+
+            br.close();
+            urlConnection.disconnect();
+        } catch(MalformedURLException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
         //guardar la receta usando la api
     }
 
@@ -325,7 +355,7 @@ public class NewRecipe extends AppCompatActivity {
 
             Log.d("Image Name <-----", fileName);
 
-            tempImagName = "https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/"+ fileName+extenstion;
+            tempImagName = fileName+extenstion;
 
             imags.add(tempImagName);
 
@@ -384,5 +414,14 @@ public class NewRecipe extends AppCompatActivity {
             int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
             return cursor.getString(index);
         }
+    }
+
+    private String turnArrToS(ArrayList<String> l){
+        String result = "";
+
+        for(String value : l){
+            result = result + "" +value;
+        }
+        return result;
     }
 }

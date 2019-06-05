@@ -15,10 +15,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,48 +47,42 @@ public class RecipeList extends AppCompatActivity {
     // este seria el metodo que carga la informacion de las listas
     public ArrayList<Recipe> createLists(){
         ArrayList<Recipe> rep = new ArrayList<>();
+        try{
+            String api = "https://api-recetas.herokuapp.com/";
 
-        ArrayList<String> f1 = new ArrayList<>();
-        ArrayList<String> ss = new ArrayList<>();
+            URL url = new URL(api +"recipes");
+            HttpURLConnection urlConnection = null;
+            urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.setRequestProperty("Autenticacion",token);
+            urlConnection.connect();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder b = new StringBuilder();
+            String input;
 
-        ArrayList<String> sl = new ArrayList<>();
-        ArrayList<String> sl2 = new ArrayList<>();
+            while((input = br.readLine()) != null){
+                b.append(input);
+            }
 
-        ArrayList<String> im1 = new ArrayList<>();
-        ArrayList<String> im2 = new ArrayList<>();
+            JSONArray ar = new JSONArray(b.toString());
+            for(int n = 0; n < ar.length(); n++)
+            {
+                JSONObject object = ar.getJSONObject(n); //-> no se que sigue
+                //se crea el objeto recipe(nombre,tipo[ingrdientes],[pasos],[imagenes] -> "https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/" + imagen)
+                // se inserta en rep.add(recipe);
 
-        f1.add("pork");
-        f1.add("onions");
-        f1.add("salt");
+            }
 
-        sl.add("Condiment the pork to the personal taste");
-        sl.add("preheat the oven to 300 °F");
-        sl.add("cook until it reaches the consistency desired");
-
-        ss.add("Tomato sauce");
-        ss.add("pasta");
-        ss.add("salt");
-
-        sl2.add("Condiment the sauce to the personal taste");
-        sl2.add("cook the pasta");
-        sl2.add("add the sauce");
-
-        im1.add("https://cdn-image.foodandwine.com/sites/default/files/201307-xl-spice-roasted-pork-tenderloin.jpg");
-        im1.add("https://www.bbcgoodfood.com/sites/default/files/styles/recipe/public/recipe_images/recipe-image-legacy-id--738_12.jpg?itok=l-J37lLl");
-
-        im2.add("https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/6c33f61f-fb63-45bd-9813-d057df732865.jpg");
-
-
-
-
-
-        Recipe recipe1 = new Recipe("Roasted pork", "meat",f1,sl,im1);
-        Recipe recipe2 = new Recipe("Spaghetti Carbonara","pasta",ss,sl2,im2);
+            br.close();
+            urlConnection.disconnect();
+        } catch(MalformedURLException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
 
 
-
-        rep.add(recipe1);
-        rep.add(recipe2);
 
 
 
