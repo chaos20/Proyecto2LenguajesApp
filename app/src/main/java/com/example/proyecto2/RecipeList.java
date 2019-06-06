@@ -29,6 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class RecipeList extends AppCompatActivity {
@@ -40,20 +41,25 @@ public class RecipeList extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_list);
         Intent i = getIntent();
         token = i.getExtras().getString("token");
+        Log.d("Token recipe list",token);
         showData();
     }
 
 
     // este seria el metodo que carga la informacion de las listas
+    //se crea el objeto recipe(nombre,tipo[ingrdientes],[pasos],[imagenes] -> "https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/" + imagen)
+    // se inserta en rep.add(recipe);
     public ArrayList<Recipe> createLists(){
         ArrayList<Recipe> rep = new ArrayList<>();
         try{
-            String api = "https://api-recetas.herokuapp.com/";
+            String api = "https://cryptic-mesa-87439.herokuapp.com/";
 
             URL url = new URL(api +"recipes");
             HttpURLConnection urlConnection = null;
             urlConnection = (HttpURLConnection)url.openConnection();
-            urlConnection.setRequestProperty("Autenticacion",token);
+
+            urlConnection.setRequestProperty("Authorization",token); //-> headers
+
             urlConnection.connect();
             BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             StringBuilder b = new StringBuilder();
@@ -63,28 +69,60 @@ public class RecipeList extends AppCompatActivity {
                 b.append(input);
             }
 
-            JSONArray ar = new JSONArray(b.toString());
-            for(int n = 0; n < ar.length(); n++)
+            JSONObject newList = new JSONObject(b.toString());
+            JSONArray recipes = newList.getJSONArray("recipes");
+            for(int n = 0; n < recipes.length(); n++)
             {
-                JSONObject object = ar.getJSONObject(n); //-> no se que sigue
-                //se crea el objeto recipe(nombre,tipo[ingrdientes],[pasos],[imagenes] -> "https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/" + imagen)
-                // se inserta en rep.add(recipe);
+                JSONArray object = recipes.getJSONArray(n);
+
+                for(int s = 0; s < object.length(); s++) {
+
+                    String nombre = object.getString(s);
+                    s++;
+
+                    String tipo = object.getString(s);
+                    s++;
+                    ArrayList<String> pIng = new ArrayList<>();
+                    JSONArray jsonIng = new JSONArray();
+
+                    jsonIng = object.getJSONArray(s);
+
+                    for (int i = 0, count = jsonIng.length(); i < count; i++) {
+
+                        pIng.add(jsonIng.getString(i));
+                    }
+
+                    s++;
+                    String pSteps;
+                    pSteps = object.getString(s);
+
+                    s++;
+                    ArrayList<String> pImag = new ArrayList<>();
+                    JSONArray jsonImag = new JSONArray();
+
+                    jsonImag = object.getJSONArray(s);
+
+                    for (int j = 0, count = jsonImag.length(); j < count; j++) {
+
+
+                        pImag.add("https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/" + jsonImag.getString(j));
+
+                    }
+                    nombre = nombre.replace("_"," ");
+
+                    Recipe newRep = new Recipe(nombre,tipo,pIng,pSteps,pImag);
+                    rep.add(newRep);
+                }
+
 
             }
-
-            br.close();
             urlConnection.disconnect();
-        } catch(MalformedURLException e){
-            e.printStackTrace();
-        }catch (IOException e){
-            e.printStackTrace();
+
         }catch(JSONException e){
             e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
         }
-
-
-
-
 
         return rep;
     }
@@ -110,8 +148,9 @@ public class RecipeList extends AppCompatActivity {
                 i.putExtra("Name",adap.names.get(position));
                 i.putExtra("Type",adap.types.get(position));
                 i.putExtra("Ingredients",adap.ingredients.get(position).toString());
-                i.putExtra("Steps",adap.steps.get(position).toString());
+                i.putExtra("Steps",adap.steps.get(position));
                 i.putExtra("Images",adap.images.get(position));
+
 
                 startActivity(i);
             }
@@ -151,5 +190,6 @@ public class RecipeList extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
 }

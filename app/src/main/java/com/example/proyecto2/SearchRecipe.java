@@ -14,6 +14,16 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class SearchRecipe extends AppCompatActivity {
@@ -82,61 +92,104 @@ public class SearchRecipe extends AppCompatActivity {
 
 
     }
-    public ArrayList<Recipe> createLists(){
+    public ArrayList<Recipe> createLists(String obj, String searchType){
+
         ArrayList<Recipe> rep = new ArrayList<>();
 
-        ArrayList<String> f1 = new ArrayList<>();
-        ArrayList<String> ss = new ArrayList<>();
+        try{
+            String api = "https://cryptic-mesa-87439.herokuapp.com/";
+            URL url = null;
+            if(searchType.equals("name")){
+                url = new URL(api +"recipe-by-name/?name='"+obj+"'");
+            }
+            else if(searchType.equals("type")){
+                url = new URL(api+"recipe-by-type/?tipo='"+obj+"'");
+            }
+            else if(searchType.equals("ingredient")){
+                url = new URL(api+"recipe-by-ingredients/?ingredients='"+obj+"'");
+            }
 
-        ArrayList<String> sl = new ArrayList<>();
-        ArrayList<String> sl2 = new ArrayList<>();
+            HttpURLConnection urlConnection = null;
+            urlConnection = (HttpURLConnection)url.openConnection();
 
-        ArrayList<String> im1 = new ArrayList<>();
-        ArrayList<String> im2 = new ArrayList<>();
+            urlConnection.setRequestProperty("Authorization",token); //-> headers
 
-        f1.add("pork");
-        f1.add("onions");
-        f1.add("salt");
+            urlConnection.connect();
+            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+            StringBuilder b = new StringBuilder();
+            String input;
 
-        sl.add("Condiment the pork to the personal taste");
-        sl.add("preheat the oven to 300 °F");
-        sl.add("cook until it reaches the consistency desired");
+            while((input = br.readLine()) != null){
+                b.append(input);
+            }
 
-        ss.add("Tomato sauce");
-        ss.add("pasta");
-        ss.add("salt");
+            JSONObject newList = new JSONObject(b.toString());
+            JSONArray recipes = newList.getJSONArray("recipes");
+            for(int n = 0; n < recipes.length(); n++)
+            {
+                JSONArray object = recipes.getJSONArray(n);
 
-        sl2.add("Condiment the sauce to the personal taste");
-        sl2.add("cook the pasta");
-        sl2.add("add the sauce");
+                for(int s = 0; s < object.length(); s++) {
 
-        im1.add("https://cdn-image.foodandwine.com/sites/default/files/201307-xl-spice-roasted-pork-tenderloin.jpg");
-        im1.add("https://www.bbcgoodfood.com/sites/default/files/styles/recipe/public/recipe_images/recipe-image-legacy-id--738_12.jpg?itok=l-J37lLl");
+                    String nombre = object.getString(s);
+                    s++;
 
-        im2.add("https://d3cizcpymoenau.cloudfront.net/images/legacy/37655/SFS_spaghetti_carbonara_CLR-3.jpg");
+                    String tipo = object.getString(s);
+                    s++;
+                    ArrayList<String> pIng = new ArrayList<>();
+                    JSONArray jsonIng = new JSONArray();
+
+                    jsonIng = object.getJSONArray(s);
+
+                    for (int i = 0, count = jsonIng.length(); i < count; i++) {
+
+                        pIng.add(jsonIng.getString(i));
+                    }
+
+                    s++;
+                    String pSteps;
+                    pSteps = object.getString(s);
+
+                    s++;
+                    ArrayList<String> pImag = new ArrayList<>();
+                    JSONArray jsonImag = new JSONArray();
+
+                    jsonImag = object.getJSONArray(s);
+
+                    for (int j = 0, count = jsonImag.length(); j < count; j++) {
+
+                        pImag.add("https://s3.us-east-2.amazonaws.com/jose-tec-lenguajes/new/" + jsonImag.getString(j));
+                    }
+
+                    Recipe newRep = new Recipe(nombre,tipo,pIng,pSteps,pImag);
+                    rep.add(newRep);
+                }
 
 
+            }
+            urlConnection.disconnect();
 
-        Recipe recipe1 = new Recipe("Roasted pork", "meat",f1,sl,im1);
-        Recipe recipe2 = new Recipe("Spaghetti Carbonara","pasta",ss,sl2,im2);
-
-
-
-        rep.add(recipe1);
-        rep.add(recipe2);
+        }catch(JSONException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
 
         return rep;
+
+
+
     }
 
 
     // se encarga de mostrar la informacion en un list view
     //en este caso, busca las listas con create lists y luego las muestra.
-    public void showData(){
+    public void showData(String obj, String searchType){
         final ListView lv;
 
         lv = findViewById(R.id.searchListView);
 
-        ArrayList<Recipe> repD = new ArrayList<>(createLists());
+        ArrayList<Recipe> repD = new ArrayList<>(createLists(obj,searchType));
 
         final AdapterRecipe adap = new AdapterRecipe(this,0,repD);
 
@@ -159,7 +212,8 @@ public class SearchRecipe extends AppCompatActivity {
 
     //aqui se haria el llamado a la busqueda y con los objetos encontrados, se pasan a tipo Recipe y se usa show data
     public void search(String obj, String type){
-                    showData();
+            obj = obj.replace(" ","_"); // -> to do
+            showData(obj,type);
         }
 
 

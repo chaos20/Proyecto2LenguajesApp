@@ -2,78 +2,70 @@ package com.example.proyecto2;
 
 import java.util.ArrayList;
 
+
 public class Recipe {
-    private String name;
-    private String type;
-    private ArrayList<String> ingridients;
-    private ArrayList<String> steps;
-    private ArrayList<String> images;
+    private String nombre;
+    private String tipo;
+    private ArrayList<String> ing = new ArrayList<>();
+    private String steps;
+    private ArrayList<String> imags = new ArrayList<>();
 
-
-    public Recipe(String pname, String ptype, ArrayList<String> pIngridients, ArrayList<String> pSteps, ArrayList<String>pImag){
-        this.name = pname;
-        this.type = ptype;
-        this.ingridients = new ArrayList<>(pIngridients);
-        this.steps = new ArrayList<>(pSteps);
-        this.images = new ArrayList<>(pImag);
+    public Recipe(String pname, String ptype, ArrayList<String> pIngridients, String pSteps, ArrayList<String>pImag){
+        this.nombre = pname;
+        this.tipo = ptype;
+        this.ing = new ArrayList<>(pIngridients);
+        this.steps = pSteps;
+        this.imags = new ArrayList<>(pImag);
     }
 
     public String getName() {
-        return name;
+        return nombre;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.nombre = name;
     }
 
     public String getType() {
-        return type;
+        return tipo;
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.tipo = type;
     }
 
     public ArrayList<String> getImages() {
-        return images;
+        return imags;
     }
 
     public void setImages(ArrayList<String> images) {
-        this.images = images;
+        this.imags = images;
     }
 
     public ArrayList<String> getIngridients() {
-        return ingridients;
+        return ing;
     }
 
     public void setIngridients(ArrayList<String> ingridients) {
-        this.ingridients = ingridients;
+        this.ing = ingridients;
     }
 
-    public ArrayList<String> getSteps() {
+    public String getSteps() {
         return steps;
     }
 
-    public void setSteps(ArrayList<String> steps) {
+    public void setSteps(String steps) {
         this.steps = steps;
     }
 
 
     public String IngrearrayToList(){
         String result = "";
-        for(String st: ingridients){
+        for(String st: ing){
             result += " " + st;
 
         }
         return result;
     }
 
-    public String stepsarrayToList(){
-        String result = "";
-        for(String st: steps){
-            result += " " + st;
-
-        }
-        return result;
-    }
 }

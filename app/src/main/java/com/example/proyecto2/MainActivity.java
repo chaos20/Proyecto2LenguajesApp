@@ -1,12 +1,17 @@
 package com.example.proyecto2;
 
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         LoginButton(); //metodo que hace que los botones funcionen
+
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     public void LoginButton(){
@@ -47,11 +56,10 @@ public class MainActivity extends AppCompatActivity {
                         // la funcion getText() te da el texto que la app obtiene del campo con toString() lo convierte en un string
 
                         login(username.getText().toString(), password.getText().toString());
-                        if( token == "Autenticado"){
+                        if( !(token.equals("unauthorized"))){
                             Toast.makeText(MainActivity.this,"User and password is correct",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(".RecipeList");
                             intent.putExtra("token",token);
-
 
                             startActivity(intent);
                         }
@@ -71,33 +79,41 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-
         }
 
         public void login(String username, String pass){
             try{
-                String api = "https://api-recetas.herokuapp.com/";
+                String api = "https://cryptic-mesa-87439.herokuapp.com/";
 
-                URL url = new URL(api +"login?correo="+username+"&"+"password="+pass);
+                URL url = new URL(api +"auth/login/?email="+username+"&"+"password="+pass);
                 HttpURLConnection urlConnection = null;
                 urlConnection = (HttpURLConnection)url.openConnection();
+                urlConnection.setRequestMethod("POST"); //por defecto "GET"
                 urlConnection.connect();
-                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                StringBuilder b = new StringBuilder();
-                String input;
 
-                while((input = br.readLine()) != null){
-                    b.append(input);
+                if(urlConnection.getErrorStream() == null){
+                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder b = new StringBuilder();
+                    String input;
+                    while((input = br.readLine()) != null){
+                        b.append(input);
+                    }
+                    JSONObject par = new JSONObject(b.toString());
+                    token = par.getString("token");
+                    br.close();
                 }
+                else{
 
-                token = b.toString();
+                    token = "unauthorized";
+                }
+                Log.d("token",token);
 
-                br.close();
                 urlConnection.disconnect();
             } catch(MalformedURLException e){
                 e.printStackTrace();
             }catch (IOException e){
+                e.printStackTrace();
+            }catch(JSONException e){
                 e.printStackTrace();
             }
         }

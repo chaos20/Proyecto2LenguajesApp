@@ -15,7 +15,7 @@ public class AdapterRecipe extends BaseAdapter {
     public ArrayList<String> names= new ArrayList<>();
     public ArrayList<String> types= new ArrayList<>();
     public ArrayList<ArrayList<String>> ingredients= new ArrayList<>();
-    public ArrayList<ArrayList<String>> steps= new ArrayList<>();
+    public ArrayList<String> steps= new ArrayList<>();
     public ArrayList<ArrayList<String>> images = new ArrayList<>();
 
 

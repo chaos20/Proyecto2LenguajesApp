@@ -45,6 +45,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -64,7 +66,7 @@ public class NewRecipe extends AppCompatActivity {
     private EditText ingri;
     private EditText step;
     private ArrayList<String> ingridients = new ArrayList<>();
-    private ArrayList<String> steps = new ArrayList<>();
+    private String steps;
     private ArrayList<String> imags = new ArrayList<>();
     private Button addIngri;
     private Button addStep;
@@ -85,7 +87,7 @@ public class NewRecipe extends AppCompatActivity {
         StrictMode.setVmPolicy(builder.build());
 
         Intent i = getIntent();
-        i.getExtras().getString("token");
+        token =i.getExtras().getString("token");
 
 
         mImage = findViewById(R.id.imageViewtest);
@@ -117,14 +119,8 @@ public class NewRecipe extends AppCompatActivity {
         addStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String getStep = step.getText().toString();
-                if(steps.contains(getStep)){
-                    Toast.makeText(getBaseContext(),"Item already in the list", Toast.LENGTH_LONG).show();
-                }
-                else{
-                    steps.add(getStep);
-                    Toast.makeText(getBaseContext(),"Item added to the list", Toast.LENGTH_LONG).show();
-                }
+                steps = step.getText().toString();
+
             }
         });
 
@@ -145,39 +141,57 @@ public class NewRecipe extends AppCompatActivity {
         });
 
 
-
-
-
     }
-
+    //guardar la receta usando la api
     public void saveRecipe(){
+        String pname = name.getText().toString().replace(" ","_");
+        String ptype = type.getText().toString().replace(" ","_");
 
+
+        //parsear las listas para que no haya problemas con el envio
 
         try{
-            String api = "https://api-recetas.herokuapp.com/";
+            String api = "https://cryptic-mesa-87439.herokuapp.com/";
 
-            URL url = new URL(api +"new-recipe?name="+name.getText().toString()+"&"+"tipo="+type.getText().toString()+"&"+"ingredients=" + turnArrToS(ingridients)+"&"+"steps="+turnArrToS(steps)+"&"+turnArrToS(imags));
+
+            URL url = new URL(api +"new-recipe?name='"+ pname +"'&"+"tipo='"+ptype+"'&"+"ingredients='" + turnArrToS(ingridients)+"'&"+"steps='"+steps+"'&"+"images='"+turnArrToS(imags)+"'");
             HttpURLConnection urlConnection = null;
             urlConnection = (HttpURLConnection)url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Authorization",token);
             urlConnection.connect();
-            BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            StringBuilder b = new StringBuilder();
-            String input;
 
-            while((input = br.readLine()) != null){
-                b.append(input);
+
+            if(urlConnection.getErrorStream() == null){
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                StringBuilder b = new StringBuilder();
+                String input;
+                while((input = br.readLine()) != null){
+                    b.append(input);
+                }
+                Log.d("INput",b.toString());
+
+                br.close();
+            }
+            else{
+                BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getErrorStream()));
+                StringBuilder b = new StringBuilder();
+                String input;
+                while((input = br.readLine()) != null){
+                    b.append(input);
+                }
+
+                Log.d("error",b.toString());
             }
 
-            token = b.toString();
 
-            br.close();
             urlConnection.disconnect();
         } catch(MalformedURLException e){
             e.printStackTrace();
         }catch (IOException e){
             e.printStackTrace();
         }
-        //guardar la receta usando la api
+
     }
 
 
@@ -355,7 +369,7 @@ public class NewRecipe extends AppCompatActivity {
 
             Log.d("Image Name <-----", fileName);
 
-            tempImagName = fileName+extenstion;
+            tempImagName = fileName+"."+extenstion;
 
             imags.add(tempImagName);
 
@@ -373,8 +387,6 @@ public class NewRecipe extends AppCompatActivity {
             runOnUiThread(new Runnable() {
 
                 public void run() {
-
-
 
                 }
 
@@ -403,7 +415,6 @@ public class NewRecipe extends AppCompatActivity {
 
     }
 
-
     private String getRealPathFromURI(String contentURI) {
         Uri contentUri = Uri.parse(contentURI);
         Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
@@ -419,8 +430,15 @@ public class NewRecipe extends AppCompatActivity {
     private String turnArrToS(ArrayList<String> l){
         String result = "";
 
+        String fin = l.get(l.size()-1);
+
         for(String value : l){
-            result = result + "" +value;
+            if(!value.equals(fin)){
+                result = result  +value+",";
+            }
+            else{
+                result = result  +value;
+            }
         }
         return result;
     }

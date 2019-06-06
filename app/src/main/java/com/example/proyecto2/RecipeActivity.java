@@ -41,7 +41,9 @@ public class RecipeActivity extends AppCompatActivity {
         typetx.setText(type);
         ingtx.setText(ingri);
         stepstx.setText(steps);
-        final ImageListAdapter adapter = new ImageListAdapter(this,images);
-        lv.setAdapter(adapter);
+        if(images != null) {
+            final ImageListAdapter adapter = new ImageListAdapter(this, images);
+            lv.setAdapter(adapter);
+        }
     }
 }
