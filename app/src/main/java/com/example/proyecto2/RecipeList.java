@@ -147,7 +147,7 @@ public class RecipeList extends AppCompatActivity {
                 Intent  i = new Intent(getApplicationContext(),RecipeActivity.class);
                 i.putExtra("Name",adap.names.get(position));
                 i.putExtra("Type",adap.types.get(position));
-                i.putExtra("Ingredients",adap.ingredients.get(position).toString());
+                i.putExtra("Ingredients",turnArrToS(adap.ingredients.get(position)));
                 i.putExtra("Steps",adap.steps.get(position));
                 i.putExtra("Images",adap.images.get(position));
 
@@ -189,6 +189,22 @@ public class RecipeList extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private String turnArrToS(ArrayList<String> l){
+        String result = "";
+
+        String fin = l.get(l.size()-1);
+
+        for(String value : l){
+            if(!value.equals(fin)){
+                result = result  +value+",";
+            }
+            else{
+                result = result  +value;
+            }
+        }
+        return result;
     }
 
 
