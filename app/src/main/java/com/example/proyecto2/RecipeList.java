@@ -32,6 +32,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+import okhttp3.OkHttpClient;
+
 public class RecipeList extends AppCompatActivity {
     String token;
 
@@ -52,7 +57,17 @@ public class RecipeList extends AppCompatActivity {
     public ArrayList<Recipe> createLists(){
         ArrayList<Recipe> rep = new ArrayList<>();
         try{
-            String api = "https://cryptic-mesa-87439.herokuapp.com/";
+            String api = "http://www.recetaslocas.club/";
+
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            OkHttpClient client = builder.build();
 
             URL url = new URL(api +"recipes");
             HttpURLConnection urlConnection = null;
@@ -184,6 +199,11 @@ public class RecipeList extends AppCompatActivity {
 
             case R.id.action_refresh:
                 showData();
+                return true;
+
+            case R.id.action_logout:
+                finish();
+                token = null;
                 return true;
 
             default:

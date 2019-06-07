@@ -26,6 +26,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+import okhttp3.OkHttpClient;
+
 public class SearchRecipe extends AppCompatActivity {
 
     private String searchObject; //Esto es el tipo de objeto a buscar, o sea si se busca un nombre, un tipo o un ingrediente
@@ -97,7 +102,18 @@ public class SearchRecipe extends AppCompatActivity {
         ArrayList<Recipe> rep = new ArrayList<>();
 
         try{
-            String api = "https://cryptic-mesa-87439.herokuapp.com/";
+            String api = "http://www.recetaslocas.club/";
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            OkHttpClient client = builder.build();
+
+
             URL url = null;
             if(searchType.equals("name")){
                 url = new URL(api +"recipe-by-name/?name='"+obj+"'");
@@ -202,7 +218,7 @@ public class SearchRecipe extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(),RecipeActivity.class);
                 i.putExtra("Name",adap.names.get(position));
                 i.putExtra("Type",adap.types.get(position));
-                i.putExtra("Ingredients",adap.ingredients.get(position).toString());
+                i.putExtra("Ingredients",turnArrToS(adap.ingredients.get(position)));
                 i.putExtra("Steps",adap.steps.get(position).toString());
                 i.putExtra("Images",adap.images.get(position));
                 startActivity(i);
@@ -216,8 +232,19 @@ public class SearchRecipe extends AppCompatActivity {
             showData(obj,type);
         }
 
+    private String turnArrToS(ArrayList<String> l){
+        String result = "";
 
+        String fin = l.get(l.size()-1);
 
-
-
+        for(String value : l){
+            if(!value.equals(fin)){
+                result = result  +value+",";
+            }
+            else{
+                result = result  +value;
+            }
+        }
+        return result;
+    }
 }

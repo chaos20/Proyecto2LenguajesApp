@@ -28,4 +28,5 @@
     <string name="next">next</string>
     <string name="add_the_steps">Add the steps</string>
     <string name="add_recipe">Add Recipe</string>
+    <string name="log_out">Log Out</string>
 </resources>

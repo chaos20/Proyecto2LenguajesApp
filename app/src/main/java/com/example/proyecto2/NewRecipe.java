@@ -1,5 +1,6 @@
 package com.example.proyecto2;
 
+import android.content.Context;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,22 +17,18 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
@@ -45,7 +42,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
 
-import org.json.JSONObject;
+import android.content.SharedPreferences;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,10 +52,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+import okhttp3.OkHttpClient;
+
 public class NewRecipe extends AppCompatActivity {
 
-    private static final String AWS_KEY = "";
-    private static final String AWS_SECRET = "";
+    private static  String AWS_KEY;
+    private static  String AWS_SECRET;
     private static final String AWS_BUCKET = "jose-tec-lenguajes";
 
     private EditText name;
@@ -85,6 +87,10 @@ public class NewRecipe extends AppCompatActivity {
         setContentView(R.layout.activity_new_recipe);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
+
+        cargarConfiguracion();
+
+
 
         Intent i = getIntent();
         token =i.getExtras().getString("token");
@@ -151,7 +157,16 @@ public class NewRecipe extends AppCompatActivity {
         //parsear las listas para que no haya problemas con el envio
 
         try{
-            String api = "https://cryptic-mesa-87439.herokuapp.com/";
+            String api = "http://www.recetaslocas.club/";
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            OkHttpClient client = builder.build();
 
 
             URL url = new URL(api +"new-recipe?name='"+ pname +"'&"+"tipo='"+ptype+"'&"+"ingredients='" + turnArrToS(ingridients)+"'&"+"steps='"+steps+"'&"+"images='"+turnArrToS(imags)+"'");
@@ -191,6 +206,20 @@ public class NewRecipe extends AppCompatActivity {
         }catch (IOException e){
             e.printStackTrace();
         }
+
+    }
+
+
+    public void cargarConfiguracion()
+    {
+        SharedPreferences prefs =
+                getSharedPreferences("Keys", Context.MODE_PRIVATE);
+
+        AWS_KEY = prefs.getString("publickey",null);
+        AWS_SECRET = prefs.getString("Secretkey",null);
+
+        Log.d("key ->>>",AWS_KEY);
+        Log.d("Secret ---> ", AWS_SECRET);
 
     }
 

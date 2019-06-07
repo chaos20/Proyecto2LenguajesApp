@@ -1,6 +1,8 @@
 package com.example.proyecto2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +22,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
     //variables para enlazar con la interfaz
     private EditText username;
@@ -28,11 +38,14 @@ public class MainActivity extends AppCompatActivity {
     private Button reg_btn;
     private String token;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //algo asi como el "Main"
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         LoginButton(); //metodo que hace que los botones funcionen
 
 
@@ -83,7 +96,18 @@ public class MainActivity extends AppCompatActivity {
 
         public void login(String username, String pass){
             try{
-                String api = "https://cryptic-mesa-87439.herokuapp.com/";
+
+                String api = "http://www.recetaslocas.club/";
+
+                OkHttpClient.Builder builder = new OkHttpClient.Builder();
+                builder.hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        return true;
+                    }
+                });
+                OkHttpClient client = builder.build();
+
 
                 URL url = new URL(api +"auth/login/?email="+username+"&"+"password="+pass);
                 HttpURLConnection urlConnection = null;
@@ -117,5 +141,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
     }
 

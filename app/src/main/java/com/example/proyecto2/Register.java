@@ -15,6 +15,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
+import okhttp3.OkHttpClient;
+
 
 public class Register extends AppCompatActivity {
 
@@ -55,7 +60,17 @@ public class Register extends AppCompatActivity {
     //metodo para subir la informacion del usuario
     public void uploadRegister(final String pUsername, final String pass){
         try {
-            String api = "https://cryptic-mesa-87439.herokuapp.com/";
+            String api = "http://www.recetaslocas.club/";
+
+
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            builder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            OkHttpClient client = builder.build();
 
             URL url = new URL(api +"/users/?email=" + pUsername + "&" + "password=" + pass);
             HttpURLConnection urlConnection = null;
